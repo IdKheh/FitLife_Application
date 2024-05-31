@@ -2,17 +2,13 @@ package com.example.fitlife
 
 import CountdownTimerFragment
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
-import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -61,16 +57,10 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         val iconL = view.findViewById<ImageView>(R.id.iconL)
         iconL.setOnClickListener{
             if (type == "exercise") {
-                val manager = (view.context as FragmentActivity).supportFragmentManager
-                val fragmentTransaction = manager.beginTransaction()
-                fragmentTransaction.replace(R.id.container, ExerciseFragment())
-                fragmentTransaction.commit()
+                changeFragment(ExerciseFragment())
             }
             else {
-                val manager = (view.context as FragmentActivity).supportFragmentManager
-                val fragmentTransaction = manager.beginTransaction()
-                fragmentTransaction.replace(R.id.container, RecipeFragment())
-                fragmentTransaction.commit()
+                changeFragment(RecipeFragment())
             }
         }
 
@@ -78,26 +68,17 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         view.findViewById<TextView>(R.id.place).text = name
         view.findViewById<TextView>(R.id.description).text = description
         if(type == "exercise"){
-            fieldText.text = "Liczba powrórzeń: ${amount} \nSerie: ${series}"
+            fieldText.text = "Liczba powtórzeń: ${amount} \nSerie: ${series}"
             view.findViewById<FloatingActionButton>(R.id.fabStoper).setOnClickListener {
                 changeFragmentStoper(CountdownTimerFragment())
             }
         }
         else{
-            firebaseRef = FirebaseDatabase.getInstance().getReference("users")
             fieldText.text = "Wartość energetyczna: ${amount} kcal\n\nSkładniki:\n\n"
             view.findViewById<FloatingActionButton>(R.id.fabStoper).visibility = View.INVISIBLE
         }
     }
 
-    fun calculateTime(timeExcepted: String, multiplier: Double): String {
-        val table = timeExcepted.split(":")
-        val seconds = ((table[0].toInt() * 3600 + table[1].toInt() * 60 + table[2].toInt()) * multiplier).toInt()
-        val hour = seconds / 3600
-        val min = (seconds % 3600 / 60).toInt()
-        val sec = (seconds % 60).toInt()
-        return String.format("%02d:%02d:%02d", hour, min, sec)
-    }
     fun changeFragment(fragment: Fragment){
         val fragmentTransaction = parentFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.container, fragment)

@@ -76,13 +76,13 @@ class Information : Fragment(R.layout.fragment_information) {
         view.findViewById<TextView>(R.id.age).text = "${user.age}"
         view.findViewById<TextView>(R.id.weight).text= "${user.weight} kg"
         view.findViewById<TextView>(R.id.height).text ="${user.height} cm"
-        user.height?.let { user.weight?.let { it1 -> bmi(view,it.toInt(), it1.toInt()) } }
+        user.height?.let { user.weight?.let { it1 -> bmi(view, it, it1) } }
     }
     @SuppressLint("SimpleDateFormat")
     private fun displayHistory(view: View) {
         val historyTextView = view.findViewById<TextView>(R.id.history)
         val cursor: Cursor? = dbHelper.getAllRecords()
-        val historyStringBuilder = StringBuilder()
+        var history =""
 
         cursor?.let {
             while (cursor.moveToNext()) {
@@ -92,11 +92,11 @@ class Information : Fragment(R.layout.fragment_information) {
                 val data = cursor.getLong(cursor.getColumnIndexOrThrow(DBLocalHelper.DATA_COL))
                 val dateFormat = SimpleDateFormat("dd:MM:yyyy")
                 val date = dateFormat.format(Date(data))
-                historyStringBuilder.append("Data: $date, Wzrost: $height cm, Waga: $weight kg, BMI: $bmi\n")
+                history+="Data: $date, Wzrost: $height cm, Waga: $weight kg, BMI: $bmi\n"
             }
         }
 
-        historyTextView.text = historyStringBuilder.toString()
+        historyTextView.text = history
         cursor?.close()
     }
     private fun fetchData(view: View, userEmail:String){
